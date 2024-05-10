@@ -1,10 +1,9 @@
 mod vec3;
+mod libs;
 
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::stdout;
-use std::thread::sleep;
-use std::time::Duration;
 use crate::vec3::Vec3;
 
 const IMAGE_WIDTH: u16 = 128;
@@ -15,18 +14,10 @@ fn main() {
     let mut stdout = stdout();
     for i in 0..IMAGE_HEIGHT {
         for j in 0..IMAGE_WIDTH {
-            let r: f32 = (j as f32) / ((IMAGE_WIDTH) as f32);
-            let g: f32 = (i as f32) / ((IMAGE_HEIGHT) as f32);
-            let b: f32 = 0.0;
-
-            let ir = (255.0 * r).floor() as u8;
-            let ig = (255.0 * g).floor() as u8;
-            let ib = (255.0 * b).floor() as u8;
-
-            //println!("{ir} {ig} {ib}");
+            let color = Vec3::new((j as f64) / ((IMAGE_WIDTH as f64)), (i as f64) / ((IMAGE_HEIGHT as f64)), 0.0);
             print!("\rRemaining: {} {}%    ", (IMAGE_HEIGHT - i - 1), ((j * 100) / IMAGE_WIDTH));
             stdout.flush().unwrap();
-            contents.push_str(&format!("{} {} {}\n", ir, ig, ib));
+            contents.push_str(libs::write_color(&color).as_str());
         }
     }
     let mut file = File::create("image.ppm").expect("Unable to create file");
