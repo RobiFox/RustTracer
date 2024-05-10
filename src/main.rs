@@ -15,11 +15,6 @@ const IMAGE_WIDTH: u32 = 350;
 const IMAGE_HEIGHT: u32 = 250;
 
 fn ray_color(ray: &Ray, world: &HittableList) -> Vec3 {
-    /*let t = hit_sphere(Point3::new(0.0, 0.0, -1.0), 0.5, &ray);
-    if t > 0.0 {
-        let n = (ray.at(t) - Vec3::new(0.0, 0.0, -1.0)).normalize();
-        return 0.5 * Vec3::new(n.x + 1.0, n.y + 1.0, n.z + 1.0)
-    }*/
     let mut hit_record = HitRecord::empty();
     if world.hit(ray, 0.0, f64::INFINITY, &mut hit_record) {
         return 0.5 * (hit_record.normal + Vec3::new(1.0, 1.0, 1.0))
@@ -34,7 +29,7 @@ fn main() {
     let aspect_ratio = IMAGE_WIDTH / IMAGE_HEIGHT;
 
     let focal_length = 1.0;
-    let viewport_height = 2.0;
+    let viewport_height = -2.0;
     let viewport_width = viewport_height * ((IMAGE_WIDTH as f64) / (IMAGE_HEIGHT as f64));
     let camera_center = Point3::new(0.0, 0.0, 0.0);
 
@@ -54,6 +49,12 @@ fn main() {
     let mut world: HittableList = HittableList { vec: vec![] };
     world.vec.push(
         Box::new(Sphere::new(
+            Vec3::new(0.0, -100.5, -1.0),
+            100.0,
+        ))
+    );
+    world.vec.push(
+        Box::new(Sphere::new(
             Vec3::new(0.0, 0.0, -1.0),
             0.5,
         ))
@@ -64,20 +65,14 @@ fn main() {
             0.5,
         ))
     );
-    world.vec.push(
-        Box::new(Sphere::new(
-            Vec3::new(0.0, -0.5, -1.0),
-            0.25,
-        ))
-    );
 
     use std::time::Instant;
     let now = Instant::now();
 
     for j in 0..IMAGE_HEIGHT {
         for i in 0..IMAGE_WIDTH {
-            print!("\rRemaining: {} {}%    ", (IMAGE_HEIGHT - j - 1), ((i * 100) / IMAGE_WIDTH));
-            stdout.flush().unwrap();
+            //print!("\rRemaining: {} {}%    ", (IMAGE_HEIGHT - j - 1), ((i * 100) / IMAGE_WIDTH));
+            //stdout.flush().unwrap();
 
             let pixel_center = pixel00_loc + (i as f64 * pixel_delta_u) + (j as f64 * pixel_delta_v);
             let ray_direction = pixel_center - camera_center;
