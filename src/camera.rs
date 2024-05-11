@@ -92,10 +92,9 @@ impl Camera {
     fn ray_color(ray: &Ray, world: &HittableList, bounces_left: u8) -> Vec3 {
         let mut hit_record = HitRecord::empty();
         if bounces_left > 0 && world.hit(ray, 0.001, f64::INFINITY, &mut hit_record) {
-            let direction = hit_record.normal + random_unit_vector();
-            //let direction = ray.direction.reflect(hit_record.normal);
-            return 0.5 * Self::ray_color(&Ray::new(hit_record.point, direction), &world, bounces_left - 1);
-            //return 0.5 * (hit_record.normal + Vec3::new(1.0, 1.0, 1.0))
+            let scattered = Ray::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 0.0, 0.0));
+            let attenuation = Vec3::new(0.0, 0.0, 0.0);
+            if(hit_record.)
         }
 
         let unit = ray.direction.normalize();

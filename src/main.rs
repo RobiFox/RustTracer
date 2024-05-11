@@ -3,6 +3,7 @@ mod libs;
 mod ray;
 mod hittable;
 mod camera;
+mod material;
 
 use crate::camera::Camera;
 use crate::hittable::{Hittable, HittableList, Sphere};

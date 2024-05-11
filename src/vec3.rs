@@ -39,6 +39,10 @@ impl Vec3 {
     pub fn reflect(self, normal: Vec3) -> Vec3 {
         self - 2.0 * normal * self.dot(&normal)
     }
+
+    pub fn near_zero(self) -> bool {
+        self.x.abs() < f64::EPSILON && self.y.abs() < f64::EPSILON && self.z.abs() < f64::EPSILON
+    }
 }
 
 impl Add for Vec3 {
