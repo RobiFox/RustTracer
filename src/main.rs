@@ -4,13 +4,10 @@ mod ray;
 mod hittable;
 mod camera;
 
-use std::fs::File;
-use std::io::prelude::*;
-use std::io::stdout;
 use crate::camera::Camera;
 use crate::hittable::{HitRecord, Hittable, HittableList, Sphere};
 use crate::ray::Ray;
-use crate::vec3::{Point3, Vec3};
+use crate::vec3::{Vec3};
 
 const IMAGE_WIDTH: u32 = 350;
 const IMAGE_HEIGHT: u32 = 250;

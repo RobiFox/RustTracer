@@ -89,7 +89,7 @@ impl Camera {
     }
 
     pub fn new(focal_length: f64) -> Camera {
-        let mut camera = Camera {
+        let camera = Camera {
             focal_length,
             pixel00_loc: Vec3::new(0.0, 0.0, 0.0),
             camera_center: Point3::new(0.0, 0.0, 0.0),
