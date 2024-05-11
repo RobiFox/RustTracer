@@ -4,12 +4,12 @@ use crate::ray::Ray;
 use crate::vec3::Vec3;
 
 pub trait Material {
-    fn scatter(self, ray_in: &Ray, hit_record: &mut HitRecord, color: &Vec3, scattered: &Ray) -> bool;
+    fn scatter(self, ray_in: &Ray, hit_record: &mut HitRecord, attenuation: &mut Vec3, scattered: &mut Ray) -> bool;
 }
 
 pub struct EmptyMaterial {}
 impl Material for EmptyMaterial {
-    fn scatter(self, ray_in: &Ray, hit_record: &mut HitRecord, color: &Vec3, scattered: &Ray) -> bool {
+    fn scatter(self, ray_in: &Ray, hit_record: &mut HitRecord, attenuation: &mut Vec3, scattered: &mut Ray) -> bool {
         panic!("oops!")
     }
 }

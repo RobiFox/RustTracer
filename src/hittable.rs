@@ -8,7 +8,7 @@ pub struct HitRecord {
     pub normal: Vec3,
     pub t: f64,
     pub front_face: bool,
-    pub material: Box<dyn Material>
+    //pub material: Box<dyn Material>
 }
 
 impl HitRecord {
@@ -18,7 +18,7 @@ impl HitRecord {
             point: Point3::new(0.0, 0.0, 0.0),
             normal: Point3::new(0.0, 0.0, 0.0),
             front_face: false,
-            material: Box::new(EmptyMaterial {}),
+            //material: Box::new(EmptyMaterial {}),
         }
     }
 
@@ -71,7 +71,7 @@ impl Hittable for Sphere {
 
         hit_record.t = root;
         hit_record.point = ray.at(hit_record.t);
-        hit_record.material = self.material;
+        //hit_record.material = self.material;
         let outward_normal = (hit_record.point - self.center) / self.radius;
         *hit_record = hit_record.set_face_normal(ray, outward_normal);
 
