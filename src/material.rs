@@ -15,7 +15,7 @@ impl Material for EmptyMaterial {
 }
 
 pub struct Lambertian {
-    albedo: Vec3,
+    pub(crate) albedo: Vec3,
 }
 impl Material for Lambertian {
     fn scatter(self, ray_in: &Ray, hit_record: &mut HitRecord, attenuation: &mut Vec3, scattered: &mut Ray) -> bool {

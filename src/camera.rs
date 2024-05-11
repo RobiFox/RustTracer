@@ -94,7 +94,6 @@ impl Camera {
         if bounces_left > 0 && world.hit(ray, 0.001, f64::INFINITY, &mut hit_record) {
             let scattered = Ray::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 0.0, 0.0));
             let attenuation = Vec3::new(0.0, 0.0, 0.0);
-            if(hit_record.)
         }
 
         let unit = ray.direction.normalize();
