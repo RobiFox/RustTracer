@@ -7,13 +7,6 @@ pub trait Material {
     fn scatter(self, ray_in: &Ray, hit_record: &mut HitRecord, attenuation: &mut Vec3, scattered: &mut Ray) -> bool;
 }
 
-pub struct EmptyMaterial {}
-impl Material for EmptyMaterial {
-    fn scatter(self, ray_in: &Ray, hit_record: &mut HitRecord, attenuation: &mut Vec3, scattered: &mut Ray) -> bool {
-        panic!("oops!")
-    }
-}
-
 pub struct Lambertian {
     pub(crate) albedo: Vec3,
 }
