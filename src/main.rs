@@ -6,7 +6,6 @@ mod hittable;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::stdout;
-use std::ops::Mul;
 use crate::hittable::{HitRecord, Hittable, HittableList, Sphere};
 use crate::ray::Ray;
 use crate::vec3::{Point3, Vec3};
@@ -44,7 +43,6 @@ fn main() {
     let pixel00_loc = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
 
     let mut contents = format!("P3\n{} {}\n255\n", IMAGE_WIDTH, IMAGE_HEIGHT);
-    let mut stdout = stdout();
 
     let mut world: HittableList = HittableList { vec: vec![] };
     world.vec.push(
@@ -55,7 +53,7 @@ fn main() {
     );
     world.vec.push(
         Box::new(Sphere::new(
-            Vec3::new(0.0, 0.0, -1.0),
+            Vec3::new(0.0, 0.0, -1.5),
             0.5,
         ))
     );

@@ -80,20 +80,7 @@ pub struct HittableList {
 
 impl Hittable for HittableList {
     fn hit(&self, ray: &Ray, ray_t_min: f64, ray_t_max: f64, hit_record: &mut HitRecord) -> bool {
-        let mut temp_hit_record: HitRecord = HitRecord {
-            point: Vec3 {
-                x: 0.0,
-                y: 0.0,
-                z: 0.0,
-            },
-            normal: Vec3 {
-                x: 0.0,
-                y: 0.0,
-                z: 0.0,
-            },
-            t: 0.0,
-            front_face: false,
-        };
+        let mut temp_hit_record: HitRecord = HitRecord::empty();
         let mut hit_anything = false;
         let mut closest_so_far = ray_t_max;
 
