@@ -5,10 +5,10 @@ mod hittable;
 
 use std::fs::File;
 use std::io::prelude::*;
-use std::io::stdout;
 use crate::hittable::{HitRecord, Hittable, HittableList, Sphere};
 use crate::ray::Ray;
 use crate::vec3::{Point3, Vec3};
+use rayon::prelude::*;
 
 const IMAGE_WIDTH: u32 = 350;
 const IMAGE_HEIGHT: u32 = 250;
@@ -68,17 +68,16 @@ fn main() {
     let now = Instant::now();
 
     for j in 0..IMAGE_HEIGHT {
-        for i in 0..IMAGE_WIDTH {
-            //print!("\rRemaining: {} {}%    ", (IMAGE_HEIGHT - j - 1), ((i * 100) / IMAGE_WIDTH));
-            //stdout.flush().unwrap();
-
+        let mut scanline = vec![Vec3::new(0.0, 0.0, 0.0); IMAGE_WIDTH as usize];
+        scanline.par_iter_mut().enumerate().for_each(|(i, pixel)| {
             let pixel_center = pixel00_loc + (i as f64 * pixel_delta_u) + (j as f64 * pixel_delta_v);
             let ray_direction = pixel_center - camera_center;
             let r = Ray::new(camera_center, ray_direction);
 
-            //let color = Vec3::new((j as f64) / ((IMAGE_WIDTH as f64)), (i as f64) / ((IMAGE_HEIGHT as f64)), 0.0);
-            let color = ray_color(&r, &world);
-            contents.push_str(libs::write_color(&color).as_str());
+            *pixel = ray_color(&r, &world);
+        });
+        for color in &scanline {
+            contents.push_str(libs::write_color(color).as_str());
         }
     }
     print!("\n");
