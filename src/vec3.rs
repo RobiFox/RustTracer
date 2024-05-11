@@ -35,6 +35,10 @@ impl Vec3 {
             + self.y * other.y
             + self.z * other.z
     }
+
+    pub fn reflect(self, normal: Vec3) -> Vec3 {
+        self - 2.0 * normal * self.dot(&normal)
+    }
 }
 
 impl Add for Vec3 {

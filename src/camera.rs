@@ -1,7 +1,9 @@
 use std::fs::File;
 use std::io::Write;
+use rand::Rng;
 use crate::hittable::{HitRecord, Hittable, HittableList};
 use crate::{IMAGE_HEIGHT, IMAGE_WIDTH, libs};
+use crate::libs::{random_on_hemisphere, random_unit_vector};
 use crate::ray::Ray;
 use crate::vec3::{Point3, Vec3};
 
@@ -31,6 +33,9 @@ pub struct Camera {
     pixel_delta_v: Vec3,
     //viewport_upper_left: Vec3,
     pixel00_loc: Vec3,
+    max_bounces: u8,
+    samples_per_pixel: u8,
+    pixel_sample_scale: f64,
 }
 
 impl Camera {
@@ -40,9 +45,13 @@ impl Camera {
 
         for j in 0..IMAGE_HEIGHT {
             for i in 0..IMAGE_WIDTH {
-                let r = self.construct_ray(i, j);
+                let mut pixel_color = Vec3::new(0.0, 0.0, 0.0);
+                for sample in 0..self.samples_per_pixel {
+                    let r = self.construct_ray(i, j);
+                    pixel_color = pixel_color + Self::ray_color(&r, &world, self.max_bounces);
+                }
 
-                let color = Self::ray_color(&r, &world);
+                let color = self.pixel_sample_scale * pixel_color;
                 contents.push_str(libs::write_color(&color).as_str());
             }
         }
@@ -54,7 +63,10 @@ impl Camera {
     }
 
     fn construct_ray(&self, i: u32, j: u32) -> Ray {
-        let pixel_center = self.pixel00_loc + (i as f64 * self.pixel_delta_u) + (j as f64 * self.pixel_delta_v);
+        let offset = Self::sample_square();
+        let pixel_center = self.pixel00_loc
+            + ((i as f64 + offset.x) * self.pixel_delta_u)
+            + ((j as f64 + offset.y) * self.pixel_delta_v);
         let ray_direction = pixel_center - self.camera_center;
         Ray::new(self.camera_center, ray_direction)
     }
@@ -77,10 +89,13 @@ impl Camera {
         self
     }
 
-    fn ray_color(ray: &Ray, world: &HittableList) -> Vec3 {
+    fn ray_color(ray: &Ray, world: &HittableList, bounces_left: u8) -> Vec3 {
         let mut hit_record = HitRecord::empty();
-        if world.hit(ray, 0.0, f64::INFINITY, &mut hit_record) {
-            return 0.5 * (hit_record.normal + Vec3::new(1.0, 1.0, 1.0))
+        if bounces_left > 0 && world.hit(ray, 0.001, f64::INFINITY, &mut hit_record) {
+            let direction = hit_record.normal + random_unit_vector();
+            //let direction = ray.direction.reflect(hit_record.normal);
+            return 0.5 * Self::ray_color(&Ray::new(hit_record.point, direction), &world, bounces_left - 1);
+            //return 0.5 * (hit_record.normal + Vec3::new(1.0, 1.0, 1.0))
         }
 
         let unit = ray.direction.normalize();
@@ -88,13 +103,21 @@ impl Camera {
         (1.0 - a) * Vec3::new(1.0, 1.0, 1.0) + a * Vec3::new(0.5, 0.7, 1.0)
     }
 
-    pub fn new(focal_length: f64) -> Camera {
+    fn sample_square() -> Vec3 {
+        let mut rand = rand::thread_rng();
+        Vec3::new(rand.gen_range(-0.5..0.5), rand.gen_range(-0.5..0.5), 0.0)
+    }
+
+    pub fn new(focal_length: f64, max_bounces: u8, samples_per_pixel: u8) -> Camera {
         let camera = Camera {
             focal_length,
             pixel00_loc: Vec3::new(0.0, 0.0, 0.0),
             camera_center: Point3::new(0.0, 0.0, 0.0),
             pixel_delta_u: Vec3::new(0.0, 0.0, 0.0),
             pixel_delta_v: Vec3::new(0.0, 0.0, 0.0),
+            pixel_sample_scale: 1.0 / (samples_per_pixel as f64),
+            max_bounces,
+            samples_per_pixel
         };
         camera.initialize()
     }

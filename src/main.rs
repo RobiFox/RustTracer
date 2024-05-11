@@ -8,8 +8,8 @@ use crate::camera::Camera;
 use crate::hittable::{Hittable, HittableList, Sphere};
 use crate::vec3::{Vec3};
 
-const IMAGE_WIDTH: u32 = 350;
-const IMAGE_HEIGHT: u32 = 250;
+const IMAGE_WIDTH: u32 = 350 * 2;
+const IMAGE_HEIGHT: u32 = 250 * 2;
 
 fn main() {
     let mut world: HittableList = HittableList { vec: vec![] };
@@ -35,7 +35,7 @@ fn main() {
     use std::time::Instant;
     let now = Instant::now();
 
-    let camera = Camera::new(1.0);
+    let camera = Camera::new(1.0, 2, 4);
     camera.render(&world);
 
     let elapsed = now.elapsed();
