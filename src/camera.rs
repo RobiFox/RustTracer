@@ -1,7 +1,7 @@
 use std::fs::File;
 use std::io::Write;
 use crate::hittable::{HitRecord, Hittable, HittableList};
-use crate::{IMAGE_HEIGHT, IMAGE_WIDTH, libs, ray_color};
+use crate::{IMAGE_HEIGHT, IMAGE_WIDTH, libs};
 use crate::ray::Ray;
 use crate::vec3::{Point3, Vec3};
 
@@ -42,7 +42,7 @@ impl Camera {
             for i in 0..IMAGE_WIDTH {
                 let r = self.construct_ray(i, j);
 
-                let color = ray_color(&r, &world);
+                let color = Self::ray_color(&r, &world);
                 contents.push_str(libs::write_color(&color).as_str());
             }
         }
