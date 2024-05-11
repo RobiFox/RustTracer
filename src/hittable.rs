@@ -11,8 +11,8 @@ pub struct HitRecord<'a> {
     pub material: Option<&'a Box<dyn Material>>
 }
 
-impl HitRecord {
-    pub fn empty() -> HitRecord {
+impl<'a> HitRecord<'a> {
+    pub fn empty() -> HitRecord<'a> {
         HitRecord {
             t: 0.0,
             point: Point3::new(0.0, 0.0, 0.0),
