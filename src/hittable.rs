@@ -87,8 +87,10 @@ impl Hittable for HittableList {
         for object in &self.vec {
             if object.hit(ray, ray_t_min, ray_t_max, &mut temp_hit_record) {
                 hit_anything = true;
-                closest_so_far = temp_hit_record.t;
-                *hit_record = temp_hit_record;
+                if temp_hit_record.t < closest_so_far {
+                    closest_so_far = temp_hit_record.t;
+                    *hit_record = temp_hit_record;
+                }
             }
         }
 
