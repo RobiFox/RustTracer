@@ -38,23 +38,16 @@ fn main() {
     );
     world.vec.push(
         Box::new(Sphere::new(
-            Vec3::new(2.0, 0.0, -1.5),
+            Vec3::new(1.0, 0.5, -1.5),
             0.5,
             Some(Material::Dialectric { albedo: Vec3::new(1.0, 1.0, 1.0), refraction_index: 1.0 / 1.33})
         ))
     );
     world.vec.push(
         Box::new(Sphere::new(
-            Vec3::new(2.0, 0.0, -1.5),
+            Vec3::new(1.0, 0.5, -1.5),
             0.75,
             Some(Material::Dialectric { albedo: Vec3::new(1.0, 1.0, 1.0), refraction_index: 1.33})
-        ))
-    );
-    world.vec.push(
-        Box::new(Sphere::new(
-            Vec3::new(2.0, 1.5, -5.0),
-            1.5,
-            Some(Material::Lambertian { albedo: Vec3::new(0.5, 1.0, 0.0) })
         ))
     );
 
