@@ -3,7 +3,7 @@ use std::io::Write;
 use rand::Rng;
 use crate::hittable::{HitRecord, Hittable, HittableList};
 use crate::{IMAGE_HEIGHT, IMAGE_WIDTH, libs};
-use crate::libs::{degrees_to_radians, random_on_hemisphere, random_unit_vector};
+use crate::libs::{degrees_to_radians};
 use crate::ray::Ray;
 use crate::vec3::{Point3, Vec3};
 

@@ -6,7 +6,7 @@ mod camera;
 mod material;
 
 use crate::camera::Camera;
-use crate::hittable::{Hittable, HittableList, Sphere};
+use crate::hittable::{HittableList, Sphere};
 use crate::material::Material;
 use crate::vec3::{Vec3};
 
