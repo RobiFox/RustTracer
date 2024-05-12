@@ -1,3 +1,4 @@
+use std::cmp::min;
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
 #[derive(Clone, Copy, Debug)]
@@ -36,13 +37,20 @@ impl Vec3 {
             + self.z * other.z
     }
 
-    pub fn reflect(self, normal: Vec3) -> Vec3 {
-        self - 2.0 * normal * self.dot(&normal)
+    pub fn reflect(self, normal: &Vec3) -> Vec3 {
+        self - 2.0 * *normal * self.dot(&normal)
     }
 
     pub fn near_zero(self) -> bool {
         self.x.abs() < f64::EPSILON && self.y.abs() < f64::EPSILON && self.z.abs() < f64::EPSILON
     }
+
+    pub fn refract(self, n: &Vec3, etai_over_etat: f64) -> Vec3 {
+        let cos_theta = -self.dot(n).min(1.0);
+        let r_out_prep = etai_over_etat * (self + cos_theta * *n);
+        let r_out_parallel = -(1.0 - r_out_prep.length_squared()).abs().sqrt();
+        r_out_prep  + r_out_parallel * *n
+     }
 }
 
 impl Add for Vec3 {
