@@ -10,8 +10,8 @@ pub fn write_color(color: &Vec3) -> String {
     format!("{} {} {}\n", ir, ig, ib)
 }
 
-pub fn degrees_to_radians(degrees: f64) {
-    degrees * PI / 180.0;
+pub fn degrees_to_radians(degrees: f64) -> f64 {
+    degrees * PI / 180.0
 }
 
 pub fn random_vector() -> Vec3 {

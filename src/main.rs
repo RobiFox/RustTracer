@@ -54,7 +54,7 @@ fn main() {
     use std::time::Instant;
     let now = Instant::now();
 
-    let camera = Camera::new(1.0, 4, 8);
+    let camera = Camera::new(Vec3::new(0.0, 0.0, 0.0), 1.0, 4,4, 60.0);
     camera.render(&world);
 
     let elapsed = now.elapsed();

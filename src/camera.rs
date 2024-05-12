@@ -3,30 +3,17 @@ use std::io::Write;
 use rand::Rng;
 use crate::hittable::{HitRecord, Hittable, HittableList};
 use crate::{IMAGE_HEIGHT, IMAGE_WIDTH, libs};
-use crate::libs::{random_on_hemisphere, random_unit_vector};
+use crate::libs::{degrees_to_radians, random_on_hemisphere, random_unit_vector};
 use crate::ray::Ray;
 use crate::vec3::{Point3, Vec3};
 
-/*
-let aspect_ratio = IMAGE_WIDTH / IMAGE_HEIGHT;
-
-    let focal_length = 1.0;
-    let viewport_height = -2.0;
-    let viewport_width = viewport_height * ((IMAGE_WIDTH as f64) / (IMAGE_HEIGHT as f64));
-    let camera_center = Point3::new(0.0, 0.0, 0.0);
-
-    let viewport_u = Vec3::new(viewport_width, 0.0, 0.0);
-    let viewport_v = Vec3::new(0.0, viewport_height, 0.0);
-
-    let pixel_delta_u = viewport_u / (IMAGE_WIDTH as f64);
-    let pixel_delta_v = viewport_v / (IMAGE_HEIGHT as f64);
-
-    let viewport_upper_left = camera_center
-        - Vec3::new(0.0, 0.0, focal_length) - viewport_u / 2.0 - viewport_v / 2.0;
-    let pixel00_loc = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
- */
-
 pub struct Camera {
+    position: Vec3,
+    forward: Vec3,
+    world_up: Vec3,
+    u: Vec3,
+    v: Vec3,
+
     focal_length: f64,
     camera_center: Point3,
     pixel_delta_u: Vec3,
@@ -36,6 +23,7 @@ pub struct Camera {
     max_bounces: u8,
     samples_per_pixel: u8,
     pixel_sample_scale: f64,
+    vfov: f64,
 }
 
 impl Camera {
@@ -71,20 +59,28 @@ impl Camera {
         Ray::new(self.camera_center, ray_direction)
     }
 
-    fn initialize(mut self) -> Self {
-        self.focal_length = 1.0;
-        let viewport_height = -2.0;
-        let viewport_width = viewport_height * ((IMAGE_WIDTH as f64) / (IMAGE_HEIGHT as f64));
-        self.camera_center = Point3::new(0.0, 0.0, 0.0);
+    fn recalculate_camera_vectors(&mut self) {
 
-        let viewport_u = Vec3::new(viewport_width, 0.0, 0.0);
-        let viewport_v = Vec3::new(0.0, viewport_height, 0.0);
+    }
+
+    fn initialize(mut self) -> Self {
+        self.recalculate_camera_vectors();
+        let theta = degrees_to_radians(self.vfov);
+        let h = f64::tan(theta / 2.0);
+        let viewport_height = 2.0 * h * self.focal_length;
+        let viewport_width = viewport_height * ((IMAGE_WIDTH as f64) / (IMAGE_HEIGHT as f64));
+        self.camera_center = self.position;
+        self.v = self.world_up.normalize();
+        self.u = self.forward.cross(&self.v).normalize();
+
+        let viewport_u = Vec3::new(viewport_width, 0.0, 0.0) * self.u;
+        let viewport_v = Vec3::new(0.0, viewport_height, 0.0) * -self.v;
 
         self.pixel_delta_u = viewport_u / (IMAGE_WIDTH as f64);
         self.pixel_delta_v = viewport_v / (IMAGE_HEIGHT as f64);
 
         let viewport_upper_left = self.camera_center
-            - Vec3::new(0.0, 0.0, self.focal_length) - viewport_u / 2.0 - viewport_v / 2.0;
+            - (self.forward * self.focal_length) - viewport_u / 2.0 - viewport_v / 2.0;
         self.pixel00_loc = viewport_upper_left + 0.5 * (self.pixel_delta_u + self.pixel_delta_v);
         self
     }
@@ -112,8 +108,14 @@ impl Camera {
         Vec3::new(rand.gen_range(-0.5..0.5), rand.gen_range(-0.5..0.5), 0.0)
     }
 
-    pub fn new(focal_length: f64, max_bounces: u8, samples_per_pixel: u8) -> Camera {
+    pub fn new(position: Vec3, focal_length: f64, max_bounces: u8, samples_per_pixel: u8, vfov: f64) -> Camera {
         let camera = Camera {
+            position,
+            forward: Vec3::new(0.0, 0.0, 1.0),
+            world_up: Vec3::new(0.0, 1.0, 0.0),
+            u: Vec3::new(0.0, 0.0, 0.0),
+            v: Vec3::new(0.0, 0.0, 0.0),
+
             focal_length,
             pixel00_loc: Vec3::new(0.0, 0.0, 0.0),
             camera_center: Point3::new(0.0, 0.0, 0.0),
@@ -122,6 +124,7 @@ impl Camera {
             pixel_sample_scale: 1.0 / (samples_per_pixel as f64),
             max_bounces,
             samples_per_pixel,
+            vfov,
         };
         camera.initialize()
     }
