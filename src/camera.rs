@@ -92,9 +92,14 @@ impl Camera {
     fn ray_color(ray: &Ray, world: &HittableList, bounces_left: u8) -> Vec3 {
         let mut hit_record = HitRecord::empty();
         if bounces_left > 0 && world.hit(ray, 0.001, f64::INFINITY, &mut hit_record) {
-            let scattered = Ray::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 0.0, 0.0));
-            let attenuation = Vec3::new(0.0, 0.0, 0.0);
-            todo!("handle scattering from material");
+            let mut scattered = Ray::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 0.0, 0.0));
+            let mut attenuation = Vec3::new(0.0, 0.0, 0.0);
+            if let Some(material) = hit_record.material.as_ref() {
+                if material.scatter(ray, &hit_record, &mut attenuation, &mut scattered) {
+                    return Self::ray_color(&scattered, world, bounces_left - 1) * attenuation;
+                }
+            }
+            //return Vec3::new(0.0, 0.0, 0.0);
         }
 
         let unit = ray.direction.normalize();
@@ -116,7 +121,7 @@ impl Camera {
             pixel_delta_v: Vec3::new(0.0, 0.0, 0.0),
             pixel_sample_scale: 1.0 / (samples_per_pixel as f64),
             max_bounces,
-            samples_per_pixel
+            samples_per_pixel,
         };
         camera.initialize()
     }

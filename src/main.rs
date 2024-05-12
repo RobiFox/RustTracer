@@ -7,7 +7,7 @@ mod material;
 
 use crate::camera::Camera;
 use crate::hittable::{Hittable, HittableList, Sphere};
-use crate::material::Lambertian;
+use crate::material::Material;
 use crate::vec3::{Vec3};
 
 const IMAGE_WIDTH: u32 = 350 * 2;
@@ -19,14 +19,21 @@ fn main() {
         Box::new(Sphere::new(
             Vec3::new(0.0, -100.5, -1.0),
             100.0,
-            Box::new(Lambertian { albedo: Vec3::new(1.0, 0.0, 0.0) })
+            Some(Material::Lambertian { albedo: Vec3::new(1.0, 0.0, 0.0) })
         ))
     );
     world.vec.push(
         Box::new(Sphere::new(
             Vec3::new(0.0, 0.0, -1.5),
             0.5,
-            Box::new(Lambertian { albedo: Vec3::new(0.0, 1.0, 0.0) })
+            Some(Material::Lambertian { albedo: Vec3::new(0.0, 1.0, 0.0) })
+        ))
+    );
+    world.vec.push(
+        Box::new(Sphere::new(
+            Vec3::new(-2.0, 0.0, -1.5),
+            1.0,
+            Some(Material::Metal { albedo: Vec3::new(0.9, 0.9, 0.9) })
         ))
     );
 

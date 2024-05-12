@@ -73,6 +73,18 @@ impl Mul<f64> for Vec3 {
     }
 }
 
+impl Mul for Vec3 {
+    type Output = Self;
+
+    fn mul(self, rhs: Vec3) -> Self::Output {
+        Self {
+            x: self.x * rhs.x,
+            y: self.y * rhs.y,
+            z: self.z * rhs.z,
+        }
+    }
+}
+
 impl Div<f64> for Vec3 {
     type Output = Self;
 
