@@ -7,9 +7,10 @@ use crate::libs::{degrees_to_radians};
 use crate::ray::Ray;
 use crate::vec3::{Point3, Vec3};
 
+#[derive(Debug, Default)]
 pub struct Camera {
-    position: Vec3,
-    forward: Vec3,
+    pub position: Vec3,
+    pub forward: Vec3,
     world_up: Vec3,
     u: Vec3,
     v: Vec3,
@@ -27,9 +28,10 @@ pub struct Camera {
 }
 
 impl Camera {
-    pub fn render(&self, world: &HittableList) -> &Self {
-        //self.initialize();
-        let mut contents = format!("P3\n{} {}\n255\n", IMAGE_WIDTH, IMAGE_HEIGHT);
+    pub fn render(&mut self, world: &HittableList) -> Vec<Vec<Vec3>> {
+        self.initialize();
+        //let mut contents = format!("P3\n{} {}\n255\n", IMAGE_WIDTH, IMAGE_HEIGHT);
+        let mut pixel_matrix: Vec<Vec<Vec3>> = vec![vec![Vec3::new(0.0, 0.0, 0.0); IMAGE_WIDTH as usize]; IMAGE_HEIGHT as usize];
 
         for j in 0..IMAGE_HEIGHT {
             for i in 0..IMAGE_WIDTH {
@@ -40,14 +42,12 @@ impl Camera {
                 }
 
                 let color = self.pixel_sample_scale * pixel_color;
-                contents.push_str(libs::write_color(&color).as_str());
+                //contents.push_str(libs::write_color(&color).as_str());
+                pixel_matrix[j as usize][i as usize] = color;
             }
         }
 
-        let mut file = File::create("image.ppm").expect("Unable to create file");
-        file.write_all(contents.as_bytes())
-            .expect("Unable to write to file");
-        self
+        pixel_matrix
     }
 
     fn construct_ray(&self, i: u32, j: u32) -> Ray {
@@ -63,7 +63,7 @@ impl Camera {
 
     }
 
-    fn initialize(mut self) -> Self {
+    fn initialize(&mut self) {
         self.recalculate_camera_vectors();
         let theta = degrees_to_radians(self.vfov);
         let h = f64::tan(theta / 2.0);
@@ -74,7 +74,7 @@ impl Camera {
         self.u = self.forward.cross(&self.v).normalize();
 
         let viewport_u = Vec3::new(viewport_width, 0.0, 0.0) * self.u;
-        let viewport_v = Vec3::new(0.0, viewport_height, 0.0) * -self.v;
+        let viewport_v = Vec3::new(0.0, viewport_height, 0.0) * self.v;
 
         self.pixel_delta_u = viewport_u / (IMAGE_WIDTH as f64);
         self.pixel_delta_v = viewport_v / (IMAGE_HEIGHT as f64);
@@ -82,7 +82,6 @@ impl Camera {
         let viewport_upper_left = self.camera_center
             - (self.forward * self.focal_length) - viewport_u / 2.0 - viewport_v / 2.0;
         self.pixel00_loc = viewport_upper_left + 0.5 * (self.pixel_delta_u + self.pixel_delta_v);
-        self
     }
 
     fn ray_color(ray: &Ray, world: &HittableList, bounces_left: u8) -> Vec3 {
@@ -109,7 +108,7 @@ impl Camera {
     }
 
     pub fn new(position: Vec3, focal_length: f64, max_bounces: u8, samples_per_pixel: u8, vfov: f64) -> Camera {
-        let camera = Camera {
+        Camera {
             position,
             forward: Vec3::new(0.0, 0.0, 1.0),
             world_up: Vec3::new(0.0, 1.0, 0.0),
@@ -125,7 +124,7 @@ impl Camera {
             max_bounces,
             samples_per_pixel,
             vfov,
-        };
-        camera.initialize()
+        }
+        //camera.initialize()
     }
 }
