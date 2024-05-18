@@ -56,6 +56,32 @@ impl Vec3 {
         let r_out_parallel = -(1.0 - r_out_prep.length_squared()).abs().sqrt();
         r_out_prep  + r_out_parallel * *n
      }
+
+    fn rotate_y(&self, theta: f64) -> Vec3 {
+        let cos_theta = theta.cos();
+        let sin_theta = theta.sin();
+
+        Vec3 {
+            x: self.x * cos_theta + self.z * sin_theta,
+            y: self.y,
+            z: -self.x * sin_theta + self.z * cos_theta,
+        }
+    }
+
+    fn rotate_x(&self, phi: f64) -> Vec3 {
+        let cos_phi = phi.cos();
+        let sin_phi = phi.sin();
+
+        Vec3 {
+            x: self.x,
+            y: self.y * cos_phi - self.z * sin_phi,
+            z: self.y * sin_phi + self.z * cos_phi,
+        }
+    }
+
+    pub fn rotate(&self, theta: f64, phi: f64) -> Vec3 {
+        self.rotate_x(theta).rotate_y(phi)
+    }
 }
 
 impl Add for Vec3 {

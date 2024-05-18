@@ -11,20 +11,20 @@ use crate::vec3::{Point3, Vec3};
 pub struct Camera {
     pub position: Vec3,
     pub forward: Vec3,
-    world_up: Vec3,
-    u: Vec3,
-    v: Vec3,
+    pub world_up: Vec3,
+    pub u: Vec3,
+    pub v: Vec3,
 
-    focal_length: f64,
-    camera_center: Point3,
-    pixel_delta_u: Vec3,
-    pixel_delta_v: Vec3,
+    pub focal_length: f64,
+    pub camera_center: Point3,
+    pub pixel_delta_u: Vec3,
+    pub pixel_delta_v: Vec3,
     //viewport_upper_left: Vec3,
-    pixel00_loc: Vec3,
-    max_bounces: u8,
-    samples_per_pixel: u8,
-    pixel_sample_scale: f64,
-    vfov: f64,
+    pub pixel00_loc: Vec3,
+    pub max_bounces: u8,
+    pub samples_per_pixel: u8,
+    pub pixel_sample_scale: f64,
+    pub vfov: f64,
 }
 
 impl Camera {
